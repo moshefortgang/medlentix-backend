@@ -1,0 +1,27 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model RealEstateTransactions {
+  id                       Int      @id @default(autoincrement())
+  createdAt                DateTime? @default(now())
+  updatedAt                DateTime? @updatedAt
+  gus                      Int?
+  helka                    Int?
+  tat_helka                Int?
+  sale_date                DateTime
+  declared_value_in_shekel Int?
+  sale_value_in_shekel     Int?
+  property_type            String
+  sold_part                Int?
+  locality                 String
+  construction_year        Int?
+  area                     Int?
+  rooms                    Int?
+}

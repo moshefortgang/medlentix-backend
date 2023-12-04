@@ -4,6 +4,7 @@ import busboy, { FileInfo } from "busboy";
 import path from "path";
 import fs from "fs";
 import { Readable } from "stream";
+import { extractDataFromExcel } from "../utils/extractFile";
 
 export const uploadExcel = (req: Request, res: Response): void => {
   try {
@@ -19,12 +20,20 @@ export const uploadExcel = (req: Request, res: Response): void => {
       if (!fs.existsSync(saveTo)) {
         fs.mkdirSync(saveTo, { recursive: true });
       }
-      file.pipe(fs.createWriteStream(saveTo + filename.filename));
+      const filePath = path.join(saveTo, filename.filename);
+      const writeStream = fs.createWriteStream(filePath);
+      file.pipe(writeStream);
+
+      writeStream.on('finish', () => {
+        console.log('File saved at:', filePath);
+        const extractedData = extractDataFromExcel(filePath); // Pass the file path to the function
+        console.log("Extracted Data:", extractedData);
+        res.json({ message: "Form data processed successfully" });
+      });
     });
 
     bb.on("finish", () => {
       console.log("Busboy finished parsing the form!");
-      res.json({ message: "Form data processed successfully" });
     });
 
     req.pipe(bb);

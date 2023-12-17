@@ -9,37 +9,55 @@ datasource db {
 }
 
 model RealEstateTransactions {
-  id                       Int       @id @default(autoincrement())
-  createdAt                DateTime? @default(now())
-  updatedAt                DateTime? @updatedAt
-  gush                     Int?
-  helka                    Int?
-  tatHelka                Int?
-  saleDate                DateTime?
+  id                    Int       @id @default(autoincrement())
+  createdAt             DateTime? @default(now())
+  updatedAt             DateTime? @updatedAt
+  gush                  Int?
+  helka                 Int?
+  tatHelka              Int?
+  saleDate              DateTime?
   declaredValueInShekel Int?
   saleValueInShekel     Int?
-  propertyType            String?
-  soldPart                Int?
-  locality                 String?
-  constructionYear        Int?
-  area                     String?
-  rooms                    Int?
-  blockId                  Int?
+  propertyType          String?
+  soldPart              Int?
+  locality              String?
+  constructionYear      Int?
+  area                  String?
+  rooms                 Int?
+  blockId               Int?
 }
 
 model Project {
-  id           Int       @id @default(autoincrement())
-  createdAt    DateTime? @default(now())
-  updatedAt    DateTime? @updatedAt
-  projectId   Int
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
   projectName String
-  blocks       Block[]
+  shchuna     String?
+  Block       Block[]
+  michrazId   Int?
+  michraz     Michraz?  @relation(fields: [michrazId], references: [id])
 }
 
 model Block {
-  id        Int     @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
   projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project   @relation(fields: [projectId], references: [id])
   gush      Int?
   helka     Int?
+}
+
+model Michraz {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime? @default(now())
+  updatedAt      DateTime? @updatedAt
+  MichrazID      Int
+  MitchamName    String
+  SchumZchiya    Int
+  ShemZoche      String
+  Kibolet        Int
+  HotzaotPituach Int
+  VaadaDate      DateTime
+  Project        Project[]
 }

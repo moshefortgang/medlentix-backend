@@ -1,4 +1,3 @@
-
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { Request, Response } from "express";
 import prisma from "../db/prisma/client";
@@ -9,6 +8,8 @@ interface SearchRequestBody {
   KodYeshuv: number;
   ActiveMichraz: boolean;
   FromVaadaDate: string;
+  KodSugMichraz: Array<number>;
+  KodYeud: Array<number>;
 }
 
 export const fetchDataFromRami = async (req: Request, res: Response): Promise<void> => {
@@ -17,9 +18,11 @@ export const fetchDataFromRami = async (req: Request, res: Response): Promise<vo
 
     const requestData: SearchRequestBody = {
       ActiveQuickSearch: false,
-      KodYeshuv: kodYeshuv || 2610, //need to improve
+      KodYeshuv: kodYeshuv || 5000, //need to improve
       ActiveMichraz: false,
       FromVaadaDate: fromVaadaDate || "2014-12-31T22:00:00.000Z", //need to improve
+      KodSugMichraz: [1, 5, 8, 9, 2, 3, 7],
+      KodYeud: [2, 1, 14],
     };
 
     const config: AxiosRequestConfig = {
@@ -81,7 +84,7 @@ const processMichraz = async (michraz: { VaadaDate: any; Shchuna: string; Tik: T
 
       let project = await prisma.project.create({
         data: {
-          projectName: "בית שמש - " + tik.ShemZoche,
+          projectName: "תל אביב - " + tik.ShemZoche,
           shchuna: michraz.Shchuna,
           michrazId: michrazResult.id,
         },
@@ -94,6 +97,7 @@ const processMichraz = async (michraz: { VaadaDate: any; Shchuna: string; Tik: T
             gush: +gushHelka.Gush,
             helka: +gushHelka.Helka,
           },
+          skipDuplicates: true,
         });
       }
     } catch (error) {

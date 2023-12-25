@@ -7,7 +7,7 @@ export interface ExtractedData {
   saleValueInShekel: number
   propertyType: string
   soldPart: number
-  locality: string
+  locality: number
   constructionYear: number
   area: string
   rooms: number

@@ -25,11 +25,12 @@ export const uploadExcel = (req: Request, res: Response): void => {
       file.pipe(writeStream);
 
       writeStream.on("finish", async () => {
-        const extractedData = extractDataFromExcel(filePath); // Pass the file path to the function
+        const extractedData = await extractDataFromExcel(filePath); // Pass the file path to the function
         console.log("Extracted Data:", extractedData);
         if (typeof extractedData !== "boolean") {
           const realEstateTransactions = await prisma.realEstateTransactions.createMany({
             data: extractedData,
+						skipDuplicates: true,
           });
         }
         res.json({ message: "Form data processed successfully" });

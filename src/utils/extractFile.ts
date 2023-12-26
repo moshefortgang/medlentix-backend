@@ -1,6 +1,7 @@
 import xlsx from "xlsx";
 import { ExtractedData } from "../types/ExtractedData";
 import prisma from "../db/prisma/client";
+import { CitiesMap } from "../types/City";
 
 export async function extractDataFromExcel(filePath: string): Promise<boolean | ExtractedData[]> {
   try {
@@ -13,7 +14,7 @@ export async function extractDataFromExcel(filePath: string): Promise<boolean | 
 
     const data = xlsx.utils.sheet_to_json(worksheet, { header: 1, raw: false });
 
-		const cities = await getCitiesMap();
+    const cities = await getCitiesMap();
 
     return data.slice(1).map((row: any) => {
       const [gush, helaka, tatHelaka] = row[0].toString().split("-");
@@ -40,13 +41,16 @@ export async function extractDataFromExcel(filePath: string): Promise<boolean | 
   }
 }
 
-
-const getCitiesMap = async () => {
+export const getCitiesMap = async (getByCode: boolean = false): Promise<CitiesMap> => {
   try {
     const citiesData = await prisma.cities.findMany();
-    return Object.fromEntries(citiesData.map(city => [city.settlementName, city.settlementCode]));
+    return Object.fromEntries(
+      citiesData.map((city) =>
+        getByCode ? [city.settlementCode, city.settlementName] : [city.settlementName, city.settlementCode]
+      )
+    );
   } catch (error) {
-    console.error('Error fetching cities:', error);
+    console.error("Error fetching cities:", error);
     throw error;
   }
 };

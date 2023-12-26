@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { Request, Response } from "express";
 import prisma from "../db/prisma/client";
 import { TikData } from "../types/TikData";
+import { getCitiesMap } from "../utils/extractFile";
 
 interface SearchRequestBody {
   ActiveQuickSearch: boolean;
@@ -14,13 +15,13 @@ interface SearchRequestBody {
 
 export const fetchDataFromRami = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { kodYeshuv, fromVaadaDate } = req.body;
+    const { kodYeshuv, fromVaadaDate } = req.query;
 
     const requestData: SearchRequestBody = {
       ActiveQuickSearch: false,
-      KodYeshuv: kodYeshuv || 5000, //need to improve
+      KodYeshuv: Number(kodYeshuv) || 5000, //need to improve
       ActiveMichraz: false,
-      FromVaadaDate: fromVaadaDate || "2014-12-31T22:00:00.000Z", //need to improve
+      FromVaadaDate: String(fromVaadaDate) || "2014-12-31T22:00:00.000Z", //need to improve
       KodSugMichraz: [1, 5, 8, 9, 2, 3, 7],
       KodYeud: [2, 1, 14],
     };
@@ -65,7 +66,12 @@ export const fetchDataFromRami = async (req: Request, res: Response): Promise<vo
   }
 };
 
-const processMichraz = async (michraz: { VaadaDate: any; Shchuna: string; Tik: TikData[] }): Promise<void> => {
+const processMichraz = async (michraz: {
+  KodYeshuv: any;
+  VaadaDate: any;
+  Shchuna: string;
+  Tik: TikData[];
+}): Promise<void> => {
   for (const tik of michraz.Tik) {
     if (tik.SchumZchiya < 1 || tik.Kibolet < 2) continue;
 
@@ -81,12 +87,14 @@ const processMichraz = async (michraz: { VaadaDate: any; Shchuna: string; Tik: T
           VaadaDate: michraz.VaadaDate,
         },
       });
+      const cities = await getCitiesMap(true);
 
       let project = await prisma.project.create({
         data: {
-          projectName: "תל אביב - " + tik.ShemZoche,
+          projectName: cities[michraz.KodYeshuv] + " - " + tik.ShemZoche,
           shchuna: michraz.Shchuna,
           michrazId: michrazResult.id,
+          city: tik.KodYeshuv,
         },
       });
       for (const gushHelka of tik.GushHelka) {

@@ -36,6 +36,7 @@ model Project {
   shchuna     String?
   Block       Block[]
   michrazId   Int?
+	city				Int?
   michraz     Michraz?  @relation(fields: [michrazId], references: [id])
 }
 
@@ -61,6 +62,8 @@ model Michraz {
   HotzaotPituach Int
   VaadaDate      DateTime
   Project        Project[]
+	@@unique([MichrazID, MitchamName, SchumZchiya, ShemZoche])
+
 }
 
 model Cities {

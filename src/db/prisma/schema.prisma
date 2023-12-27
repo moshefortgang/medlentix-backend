@@ -25,7 +25,8 @@ model RealEstateTransactions {
   area                  String?
   rooms                 Int?
   blockId               Int?
-	@@unique([gush, helka, tatHelka, saleDate, declaredValueInShekel, area, rooms])
+
+  @@unique([gush, helka, tatHelka, saleDate, declaredValueInShekel, area, rooms])
 }
 
 model Project {
@@ -36,7 +37,7 @@ model Project {
   shchuna     String?
   Block       Block[]
   michrazId   Int?
-	city				Int?
+  city        Int?
   michraz     Michraz?  @relation(fields: [michrazId], references: [id])
 }
 
@@ -62,8 +63,8 @@ model Michraz {
   HotzaotPituach Int
   VaadaDate      DateTime
   Project        Project[]
-	@@unique([MichrazID, MitchamName, SchumZchiya, ShemZoche])
 
+  @@unique([MichrazID, MitchamName, SchumZchiya, ShemZoche])
 }
 
 model Cities {
@@ -77,4 +78,29 @@ model Cities {
   ministryDistrict      String
   regionalCouncilCode   Int
   regionalCouncilName   String?
+}
+
+model RealEstateTransactionsNadlanGov {
+  id                    Int      @id @default(autoincrement())
+  dealDateTime          DateTime
+  fullAddress           String?
+  displayAddress        String?
+  gush                  Int?
+  helka                 Int?
+  tatHelka              Int?
+	dealNatureDescription String?
+  assetRoomNum          String
+  floorNo               String?
+  dealNature            String
+  dealAmount            String
+  newProjectText        String?
+  projectName           String?
+  buildingYear          String?
+  yearBuilt             String?
+  buildingFloors        String?
+  keyValue              String
+  type                  Int
+  polygonId             String
+  trendIsNegative       Boolean
+  trendFormat           String?
 }

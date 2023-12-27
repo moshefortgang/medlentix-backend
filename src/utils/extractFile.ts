@@ -17,13 +17,13 @@ export async function extractDataFromExcel(filePath: string): Promise<boolean | 
     const cities = await getCitiesMap();
 
     return data.slice(1).map((row: any) => {
-      const [gush, helaka, tatHelaka] = row[0].toString().split("-");
+      const [gush, helka, tatHelka] = row[0].toString().split("-");
       const dateParts = row[1].split("/");
       const saleDate = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
       return {
         gush: +gush,
-        helka: +helaka,
-        tatHelka: +tatHelaka,
+        helka: +helka,
+        tatHelka: +tatHelka,
         saleDate: saleDate,
         declaredValueInShekel: +row[2],
         saleValueInShekel: +row[3],

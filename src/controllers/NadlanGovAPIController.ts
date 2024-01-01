@@ -24,7 +24,7 @@ interface RealEstateTransaction {
   TREND_FORMAT: string;
 }
 
-const insertToDb = async (allResultsData: RealEstateTransaction[]): Promise<void> => {
+const insertToDb = async (allResultsData: RealEstateTransaction[], kodYeshuv: any): Promise<void> => {
   try {
     const mappedData = allResultsData.map((resultData) => {
 
@@ -52,6 +52,7 @@ const insertToDb = async (allResultsData: RealEstateTransaction[]): Promise<void
         polygonId: resultData.POLYGON_ID,
         trendIsNegative: resultData.TREND_IS_NEGATIVE,
         trendFormat: resultData.TREND_FORMAT,
+        locality: +kodYeshuv
       };
     });
 
@@ -93,7 +94,7 @@ const fetchData = async (kodYeshuv: any, pageNo: number): Promise<RealEstateTran
       return [];
     }
 
-    insertToDb(allResults);
+    insertToDb(allResults, kodYeshuv);
     console.log(JSON.stringify(allResults));
 
     return allResults;

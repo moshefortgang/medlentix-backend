@@ -1,6 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { Request, Response } from "express";
 import prisma from "../db/prisma/client";
+// import multiFloors from '../utils/getReplaceFloorFromStringToNumber'
+import removeNonNumericChars from '../utils/removeNonNumericChars'
 
 interface RealEstateTransaction {
   DEALDATETIME: string;
@@ -27,9 +29,10 @@ interface RealEstateTransaction {
 const insertToDb = async (allResultsData: RealEstateTransaction[], kodYeshuv: any): Promise<void> => {
   try {
     const mappedData = allResultsData.map((resultData) => {
-
+     
       const [gush, helka, tatHelka] = resultData.GUSH.toString().split("-");
-
+      // const floorNo = multiFloors(resultData.FLOORNO).toString()
+      const dealAmount = removeNonNumericChars(resultData.DEALAMOUNT)
       return {
         dealDateTime: new Date(resultData.DEALDATETIME),
         fullAddress: resultData.FULLADRESS,
@@ -40,10 +43,11 @@ const insertToDb = async (allResultsData: RealEstateTransaction[], kodYeshuv: an
         dealNatureDescription: resultData.DEALNATUREDESCRIPTION,
         assetRoomNum: resultData.ASSETROOMNUM,
         floorNo: resultData.FLOORNO,
-        dealNature: resultData.DEALNATURE,
-        dealAmount: resultData.DEALAMOUNT,
+        dealNature: +resultData.DEALNATURE,
+        dealAmount: dealAmount,
         newProjectText: resultData.NEWPROJECTTEXT,
         projectName: resultData.PROJECTNAME,
+        
         buildingYear: resultData.BUILDINGYEAR,
         yearBuilt: resultData.YEARBUILT,
         buildingFloors: resultData.BUILDINGFLOORS,
@@ -56,6 +60,7 @@ const insertToDb = async (allResultsData: RealEstateTransaction[], kodYeshuv: an
       };
     });
 
+  
     await prisma.realEstateTransactionsNadlanGov.createMany({
       data: mappedData,
       skipDuplicates: true,

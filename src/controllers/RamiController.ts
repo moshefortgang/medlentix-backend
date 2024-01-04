@@ -3,15 +3,7 @@ import { Request, Response } from "express";
 import prisma from "../db/prisma/client";
 import { TikData } from "../types/TikData";
 import { getCitiesMap } from "../utils/extractFile";
-
-interface SearchRequestBody {
-  ActiveQuickSearch: boolean;
-  KodYeshuv: number;
-  ActiveMichraz: boolean;
-  FromVaadaDate: string;
-  KodSugMichraz: Array<number>;
-  KodYeud: Array<number>;
-}
+import { SearchRequestBody } from "../types/SearchRequestBody";
 
 export const fetchDataFromRami = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -94,7 +86,7 @@ const processMichraz = async (michraz: {
           projectName: cities[michraz.KodYeshuv] + " - " + tik.ShemZoche,
           shchuna: michraz.Shchuna,
           michrazId: michrazResult.id,
-          city: tik.KodYeshuv,
+          city: michraz.KodYeshuv,
         },
       });
       for (const gushHelka of tik.GushHelka) {

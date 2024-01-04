@@ -104,4 +104,6 @@ model RealEstateTransactionsNadlanGov {
   trendIsNegative       Boolean
   trendFormat           String?
   locality              Int?
+
+  @@unique([gush, helka, tatHelka, dealDateTime, dealAmount, dealNature, assetRoomNum])
 }
